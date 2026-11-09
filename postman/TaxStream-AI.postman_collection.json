@@ -1,0 +1,237 @@
+{
+  "info": {
+    "name": "TaxStream-AI API",
+    "description": "Complete API collection for TaxStream-AI. Import alongside TaxStream-AI.postman_environment.json.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "1. Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/users/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Asha Nair\",\n  \"email\": \"asha@example.com\",\n  \"password\": \"SecurePass123!\"\n}"
+            },
+            "description": "Verify: 201 Created. PasswordHash must NOT appear in response."
+          }
+        },
+        {
+          "name": "2. Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  var json = pm.response.json();",
+                  "  pm.environment.set('accessToken', json.accessToken);",
+                  "  console.log('accessToken saved');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/users/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"asha@example.com\",\n  \"password\": \"SecurePass123!\"\n}"
+            },
+            "description": "Verify: 200 OK. accessToken is auto-saved to environment."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tax Records",
+      "item": [
+        {
+          "name": "3. Create Tax Record",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  var json = pm.response.json();",
+                  "  pm.environment.set('taxRecordId', json.id);",
+                  "  console.log('taxRecordId saved:', json.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": "{{baseUrl}}/api/taxrecords",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"taxYear\": 2025,\n  \"grossIncome\": 850000.00,\n  \"filingStatus\": \"Single\",\n  \"deductions\": [\n    {\n      \"category\": \"Retirement\",\n      \"description\": \"Eligible retirement contribution\",\n      \"amount\": 50000.00\n    }\n  ]\n}"
+            },
+            "description": "Verify: 201 Created. TaxableIncome and TaxLiability are server-calculated. taxRecordId auto-saved."
+          }
+        },
+        {
+          "name": "4. List Tax Records",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}/api/taxrecords",
+            "description": "Verify: only the signed-in user's records are returned."
+          }
+        },
+        {
+          "name": "5. Get Tax Record by ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}/api/taxrecords/{{taxRecordId}}",
+            "description": "Verify: record and deductions are returned."
+          }
+        },
+        {
+          "name": "6. Update Tax Record",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": "{{baseUrl}}/api/taxrecords/{{taxRecordId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"taxYear\": 2025,\n  \"grossIncome\": 900000.00,\n  \"filingStatus\": \"Single\",\n  \"deductions\": [\n    {\n      \"category\": \"Retirement\",\n      \"description\": \"Updated contribution\",\n      \"amount\": 60000.00\n    }\n  ]\n}"
+            },
+            "description": "Verify: allowed fields update and derived tax values are recalculated."
+          }
+        },
+        {
+          "name": "9. Delete Tax Record",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}/api/taxrecords/{{taxRecordId}}",
+            "description": "Verify: 204 No Content."
+          }
+        }
+      ]
+    },
+    {
+      "name": "AI Chat",
+      "item": [
+        {
+          "name": "7. AI Chat",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": "{{baseUrl}}/api/ai/chat",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prompt\": \"Can I claim my home office?\"\n}"
+            },
+            "description": "Verify: AI response is returned and conversation is persisted."
+          }
+        },
+        {
+          "name": "8. AI Chat History",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/ai/history?pageNumber=1&pageSize=20",
+              "query": [
+                { "key": "pageNumber", "value": "1" },
+                { "key": "pageSize", "value": "20" }
+              ]
+            },
+            "description": "Verify: only the signed-in user's conversations are returned."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Security / Negative Tests",
+      "item": [
+        {
+          "name": "No token → 401",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/taxrecords",
+            "description": "Verify: 401 Unauthorized (no Authorization header)."
+          }
+        },
+        {
+          "name": "Bad token → 401",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer invalid.token.here" }],
+            "url": "{{baseUrl}}/api/taxrecords",
+            "description": "Verify: 401 Unauthorized."
+          }
+        },
+        {
+          "name": "Duplicate email → 409",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/users/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Asha Again\",\n  \"email\": \"asha@example.com\",\n  \"password\": \"AnotherPass123!\"\n}"
+            },
+            "description": "Verify: 409 Conflict."
+          }
+        },
+        {
+          "name": "Negative income → 400",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": "{{baseUrl}}/api/taxrecords",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"taxYear\": 2025,\n  \"grossIncome\": -1000,\n  \"filingStatus\": \"Single\",\n  \"deductions\": []\n}"
+            },
+            "description": "Verify: 400 Bad Request."
+          }
+        },
+        {
+          "name": "Empty AI prompt → 400",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": "{{baseUrl}}/api/ai/chat",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prompt\": \"\"\n}"
+            },
+            "description": "Verify: 400 Bad Request."
+          }
+        }
+      ]
+    }
+  ]
+}
+

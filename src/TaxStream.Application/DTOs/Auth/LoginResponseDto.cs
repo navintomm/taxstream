@@ -1,0 +1,8 @@
+namespace TaxStream.Application.DTOs.Auth;
+
+public class LoginResponseDto
+{
+    public string AccessToken { get; set; } = string.Empty;
+    public string TokenType { get; set; } = "Bearer";
+    public DateTimeOffset ExpiresAt { get; set; }
+}

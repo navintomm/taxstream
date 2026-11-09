@@ -1,0 +1,37 @@
+## .NET build outputs
+**/bin/
+**/obj/
+bin/
+obj/
+*.user
+
+## Visual Studio
+.vs/
+*.suo
+*.userosscache
+*.sln.docstates
+
+## User Secrets (NEVER commit these)
+**/secrets.json
+appsettings.Local.json
+
+## EF Core Migrations lock
+*.db
+*.sqlite
+
+## Published output
+publish/
+out/
+
+## Logs
+logs/
+*.log
+
+## NuGet packages
+*.nupkg
+*.snupkg
+
+## OS files
+.DS_Store
+Thumbs.db
+
