@@ -43,14 +43,21 @@ dotnet ef migrations add InitialCreate --project src/TaxStream.Infrastructure --
 dotnet ef database update --project src/TaxStream.Infrastructure --startup-project src/TaxStream.WebAPI
 ```
 
-### 4. Run the API
+### 4. Run the Backend API
 ```bash
 dotnet run --project src/TaxStream.WebAPI
 ```
+Swagger UI: `http://localhost:5000/swagger`
 
-Swagger UI: `https://localhost:<port>/swagger`
+### 5. Run the Angular Frontend
+```bash
+cd frontend
+npm install
+npm start
+```
+Frontend App: `http://localhost:4200`
 
-### 5. Run tests
+### 6. Run backend tests
 ```bash
 dotnet test
 ```

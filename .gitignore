@@ -35,3 +35,12 @@ logs/
 .DS_Store
 Thumbs.db
 
+## Node / Angular
+**/node_modules/
+**/.angular/
+**/dist/
+frontend/node_modules/
+frontend/.angular/
+frontend/dist/
+
+
