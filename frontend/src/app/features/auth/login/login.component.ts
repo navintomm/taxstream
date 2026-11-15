@@ -122,8 +122,13 @@ export class LoginComponent {
       },
       error: (err) => {
         this.loading = false;
-        this.errorMessage = err.error?.detail || err.error?.title || 'Invalid email or password.';
+        if (err.status === 0 || err.status === 504) {
+          this.errorMessage = 'Cannot connect to backend server. Make sure "dotnet run --project src/TaxStream.WebAPI" is running!';
+        } else {
+          this.errorMessage = err.error?.detail || err.error?.title || 'Invalid email or password.';
+        }
       }
     });
   }
 }
+

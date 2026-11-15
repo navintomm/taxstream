@@ -31,3 +31,4 @@ export class TaxRecordService {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 }
+

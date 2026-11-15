@@ -21,3 +21,4 @@ export interface AiHistoryResponse {
   pageSize: number;
   totalCount: number;
 }
+

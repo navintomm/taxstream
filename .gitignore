@@ -17,6 +17,8 @@ appsettings.Local.json
 
 ## EF Core Migrations lock
 *.db
+*.db-shm
+*.db-wal
 *.sqlite
 
 ## Published output

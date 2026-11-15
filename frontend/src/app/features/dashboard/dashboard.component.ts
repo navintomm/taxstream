@@ -527,3 +527,4 @@ export class DashboardComponent implements OnInit {
     this.expandedRecordId = this.expandedRecordId === recordId ? null : recordId;
   }
 }
+

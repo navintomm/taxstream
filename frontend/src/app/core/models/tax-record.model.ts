@@ -31,3 +31,4 @@ export interface UpdateTaxRecordRequest {
   filingStatus: string;
   deductions: Deduction[];
 }
+

@@ -155,8 +155,15 @@ export class RegisterComponent {
       },
       error: (err) => {
         this.loading = false;
-        this.errorMessage = err.error?.detail || err.error?.title || 'Registration failed. Email might already be taken.';
+        if (err.status === 0 || err.status === 504) {
+          this.errorMessage = 'Cannot connect to backend server. Make sure "dotnet run --project src/TaxStream.WebAPI" is running in your other terminal!';
+        } else if (err.status === 409) {
+          this.errorMessage = 'An account with this email address already exists. Try signing in instead.';
+        } else {
+          this.errorMessage = err.error?.detail || err.error?.title || 'Registration failed. Please try again.';
+        }
       }
     });
   }
 }
+

@@ -17,8 +17,14 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         // EF Core: Supports SQLite (for zero-setup dev) and SQL Server
+        var provider = configuration["DatabaseProvider"] ?? "Sqlite";
         var connectionString = configuration.GetConnectionString("DefaultConnection") ?? "Data Source=taxstream.db";
-        var provider = configuration["DatabaseProvider"] ?? (connectionString.Contains(".db") ? "Sqlite" : "SqlServer");
+
+        // Defensive guard: if provider is Sqlite but the connection string was an old SQL Server string, fallback to sqlite
+        if (provider.Equals("Sqlite", StringComparison.OrdinalIgnoreCase) && connectionString.Contains("Server=", StringComparison.OrdinalIgnoreCase))
+        {
+            connectionString = "Data Source=taxstream.db";
+        }
 
         services.AddDbContext<AppDbContext>(options =>
         {

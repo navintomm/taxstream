@@ -20,3 +20,4 @@ export class AiChatService {
     return this.http.get<AiHistoryResponse>(`${this.baseUrl}/history?pageNumber=${pageNumber}&pageSize=${pageSize}`);
   }
 }
+
